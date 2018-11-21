@@ -1,0 +1,22 @@
+---
+title: "finalproject1120"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+library(plotly)
+setwd(dir = '~/Desktop/510/final_project')
+samples <- read.csv('samples_dataset.csv',header = TRUE, sep = ",", 
+                          quote = "\"", dec = ".", fill = TRUE)
+gene_relapse <- read.csv('mutation_relapse.csv',header = TRUE, sep = ",", 
+                          quote = "\"", dec = ".", fill = TRUE)
+ggplot(data = samples) +  geom_bar(mapping = aes(x = donor_vital_status), width = 0.5)
+ggplot(data = samples) +  geom_bar(mapping = aes(x = disease_status_last_followup, fill = donor_vital_status), width = 0.5)
+
+```
+
