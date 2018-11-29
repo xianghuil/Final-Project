@@ -10,3 +10,5 @@ I have gotten my data in R. Next, I will use bar graph to see the survival rate 
 shiny.io app and pca and all the data anylsis could be done. And figure out the issue in my anylsis. To prepare final presentation. 
 # issue
 I need to extract the sample_id, gene_id and total_raw_data into a new dataframe. and the sample_id will be the header and gene_id will be the very left colnume and use normalized_read_count to fill the dataframe. After I research the results of the website, I still don't know how to use sample_id to be the header. Now I just know to extract the 3 colnume from the file. And if I use a gene_id to do the sort in the execl, how can I sort other gene_id. However, I will try to use python to figure out this issue if I can do that successfully.
+# issue
+I have already use python to figure out my data into a new dataframe. And I have already read csv file in R into dataframe but after I open the data in R, the format is wrong. I don't know why.
