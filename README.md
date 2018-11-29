@@ -7,4 +7,6 @@ I'm not sure my data is enough, and in the next seven days, I will move foward t
 # Milestone 2 11.19
 I have gotten my data in R. Next, I will use bar graph to see the survival rate of BRCA and also creat the shiny.io app that allow person to choose the coloring by points of my data. I also conduct pca but I need to think about conduct pca for what. Also, there is a problem that the website of bioinform.io cannot be opened so I cannot see the contents that we learned. 
 # Milestone 3 11.27
-shiny.io app and pca and all the data anylsis could be done. And figure out the issue in my anylsis. To prepare final presentation.
+shiny.io app and pca and all the data anylsis could be done. And figure out the issue in my anylsis. To prepare final presentation. 
+# issue
+I need to extract the sample_id, gene_id and total_raw_data into a new dataframe. and the sample_id will be the header and gene_id will be the very left colnume and use normalized_read_count to fill the dataframe. After I research the results of the website, I still don't know how to use sample_id to be the header. Now I just know to extract the 3 colnume from the file. And if I use a gene_id to do the sort in the execl, how can I sort other gene_id. However, I will try to use python to figure out this issue if I can do that successfully.
