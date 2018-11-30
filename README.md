@@ -59,7 +59,8 @@ if __name__ == '__main__':
 
 	new_data.to_csv('data.csv', sep='\t', index=False)
 ```
-Also I put data in R into dataframe, and my data need use seq='\t' instead of seq=','
+Rename the data.csv to exp_read_count.csv
+Next, I put data in R into dataframe, and my data need use seq='\t' instead of seq=','
 ```{r} 
 library(ggplot2)
 library(reshape2)
