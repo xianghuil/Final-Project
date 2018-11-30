@@ -99,7 +99,8 @@ Then I create a 50 by 50 matrix of correlation values. A function to help me wit
 corr_gene <- cor(gene_data[,2:51])
 melted_gene<- melt(corr_gene) # the dataset will become two variable column and one value column
 head(melted_gene)
-ggplot(data=melted_gene,aes(x=Var1,y=Var2,fill=value))+geom_tile()
+p<-ggplot(melted_gene , aes(x = Var1, y = Var2)) + geom_raster(aes(fill = value)) + scale_fill_gradient2(low="navy", mid="white", high="red", midpoint=0.5) + theme( plot.title = element_blank(),axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank())
+ggplotly(p)
 ```
 Next I will creat cluster, dendextend and pca.
 
