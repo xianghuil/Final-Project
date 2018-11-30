@@ -92,6 +92,15 @@ I created the heatmap using my gene data. However, the issue is my heatmap seems
 melted_gene<- melt(gene_data) # the dataset will become two variable column and one value column
 ggplot(data = melted_gene, aes(x=melted_gene$gene_id, y=melted_gene$variable, fill=value)) + geom_tile() #the heatmap result
 ```
+Then I create a 50 by 50 matrix of correlation values. A function to help me with this would be “cor” in R, and I can apply it to genes. Also I reshape the data as a list of pairs to make easier to compute. This is core to the concept of “melt”, which turns a square matrix, into minimal (in this case pairwise) compoents. Finally, I put this melted_gene into a heatmap to get a better view.
+
+```{r}
+#there are 50 samples in the dataset and compare them
+corr_gene <- cor(gene_data[,2:51])
+melted_gene<- melt(corr_gene) # the dataset will become two variable column and one value column
+head(melted_gene)
+ggplot(data=melted_gene,aes(x=Var1,y=Var2,fill=value))+geom_tile()
+```
 Next I will creat cluster, dendextend and pca.
 
 
