@@ -2,13 +2,93 @@
 # Basic Description
 My final project is about breast cancer in Korea, and I collect the data from the website https://dcc.icgc.org/releases/current/Projects/BRCA-KR and gather the data I want.
 In my data, all the samples are from young women and they are donors. I want to compare the survival state of the patients whose relapsed type are distant recurrence/metastasis, which can present the survival rate of this relapsed type patients. Thus, in my file, you can see the these data there. 
-# Milestone 1 11.13
-I'm not sure my data is enough, and in the next seven days, I will move foward to collect data and try to study the raw data of patients' gene if they have some impact in patients' relapsed. Also, I'm thinking about the gene expression also can impact the relapsed rate. Thus, I'm also thinking about use which function and method could to reflect this issue clearly. I will try to use heat map that can reflect the replased rate in the data.
-# Milestone 2 11.19
-I have gotten my data in R. Next, I will use bar graph to see the survival rate of BRCA and also creat the shiny.io app that allow person to choose the coloring by points of my data. I also conduct pca but I need to think about conduct pca for what. Also, there is a problem that the website of bioinform.io cannot be opened so I cannot see the contents that we learned. 
-# Milestone 3 11.27
+Milestone 1 11.13
+To move foward to collect data and try to study the raw data of patients' gene if they have some impact in patients' relapsed. Also, I'm thinking about the gene expression also can impact the relapsed rate. Thus, I'm also thinking about use which function and method could to reflect this issue clearly. I will try to use heat map that can reflect the replased rate in the data.
+Milestone 2 11.19
+I have gotten my data in R. Next, I will use bar graph to see the survival rate of BRCA and also creat the shiny.io app that allow person to choose the coloring by points of my data. I also conduct pca but I need to think about conduct pca for what. 
+Milestone 3 11.27
 shiny.io app and pca and all the data anylsis could be done. And figure out the issue in my anylsis. To prepare final presentation. 
-# issue
-I need to extract the sample_id, gene_id and total_raw_data into a new dataframe. and the sample_id will be the header and gene_id will be the very left colnume and use normalized_read_count to fill the dataframe. After I research the results of the website, I still don't know how to use sample_id to be the header. Now I just know to extract the 3 colnume from the file. And if I use a gene_id to do the sort in the execl, how can I sort other gene_id. However, I will try to use python to figure out this issue if I can do that successfully.
-# issue
-I have already use python to figure out my data into a new dataframe. And I have already read csv file in R into dataframe but after I open the data in R, the format is wrong. I don't know why.
+
+# The Major Milestone
+To creat pca to analysis all the data.
+
+# The First Milestone
+To collect the data and put the data in R and creat the dataframe.
+```{r}
+library(ggplot2)
+library(dplyr)
+library(plotly)
+setwd(dir = '~/Desktop/510/final_project')
+samples <- read.csv('samples_infor.csv',header = TRUE, sep = ",", 
+                          quote = "\"", dec = ".", fill = TRUE)
+gene <- read.csv('gene_.csv',header = TRUE, sep = ",", 
+                          quote = "\"", dec = ".", fill = TRUE)
+```
+The issue is my data is not in format that let me use to analysis.
+
+# The Second Milestone
+I use python to make my data into a right format. icgc_Sample_id is my header and gene_id is very left column and the value is normalization_read_count.
+
+```{r}
+import pandas as pd
+import numpy as np
+
+if __name__ == '__main__':
+	data = pd.read_csv('exp_seq.BRCA-KR.tsv', sep='\t')
+
+	n_samples = data.shape[0]
+	sample_ids = data['icgc_sample_id'].unique()
+	gene_ids = data['gene_id'].unique()
+	col_names = np.append('gene_id', sample_ids)
+	cols = col_names.shape[0]
+	rows = gene_ids.shape[0]
+
+	# np.zeros((rows, cols))
+	new_data = pd.DataFrame(np.zeros((rows, cols)), columns=col_names, index=gene_ids)
+	new_data = new_data.astype('str')
+	# print(new_data)
+
+	for r in range(n_samples):
+	    if r % 1000 == 0:
+	        print(r)
+	    col = data.iloc[r]['icgc_sample_id']
+	    gene_id = data.iloc[r]['gene_id']
+	#     print(gene_id)
+	    new_data.loc[gene_id][col] = data.iloc[r]['normalized_read_count']
+	    new_data.loc[gene_id]['gene_id'] = gene_id
+
+	new_data.to_csv('data.csv', sep='\t', index=False)
+```
+Also I put data in R into dataframe, and my data need use seq='\t' instead of seq=','
+```{r} 
+library(ggplot2)
+library(reshape2)
+library('RColorBrewer')
+library(dplyr)
+library('dendextend')
+library(plotly)
+
+#put data into dataframe
+setwd(dir = '~/Desktop/510/final_project') #open the directory
+samples <- read.csv('samples_infor.csv',header = TRUE, sep = ",",quote = "\"", dec = ".", fill = TRUE) #read the csv file in R
+gene_data <- read.csv('exp_read_count.csv',header = TRUE, sep = "\t",quote = "\"", dec = ".", fill = TRUE) #this file need use "\t" to seperate
+```
+Next I analysis the donors' vital status and the disease_status_last_followup to make two histogram. And I obtain the data that BRCA is a high complete remission rate and suvival rate disease.
+```{r}
+#analysis the samples data into the histogram
+ggplot(data = samples) +  geom_bar(mapping = aes(x = donor_vital_status), width = 0.5)
+ggplot(data = samples) +  geom_bar(mapping = aes(x = disease_status_last_followup, fill = donor_vital_status), width = 0.5)
+```
+Next I need to creat a heatmap to compare 50 samples with their gene_id.
+
+# The Third Milestone
+I created the heatmap using my gene data. However, the issue is my heatmap seems like just has one color which I think is wrong.
+```{r}
+#there are 50 samples in the dataset and compare them with the gene_id
+melted_gene<- melt(gene_data) # the dataset will become two variable column and one value column
+ggplot(data = melted_gene, aes(x=melted_gene$gene_id, y=melted_gene$variable, fill=value)) + geom_tile() #the heatmap result
+```
+Next I will creat cluster, dendextend and pca.
+
+
+
