@@ -102,7 +102,7 @@ head(melted_gene)
 p<-ggplot(melted_gene , aes(x = Var1, y = Var2)) + geom_raster(aes(fill = value)) + scale_fill_gradient2(low="navy", mid="white", high="red", midpoint=0.5) + theme( plot.title = element_blank(),axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank())
 ggplotly(p)
 ```
-Next I will creat cluster, dendextend and pca.
-
+Next I will creat pca and shiny.io app
+  
 
 
