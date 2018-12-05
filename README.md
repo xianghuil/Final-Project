@@ -101,8 +101,34 @@ melted_gene<- melt(corr_gene) # the dataset will become two variable column and 
 head(melted_gene)
 p<-ggplot(melted_gene , aes(x = Var1, y = Var2)) + geom_raster(aes(fill = value)) + scale_fill_gradient2(low="navy", mid="white", high="red", midpoint=0.5) + theme( plot.title = element_blank(),axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank())
 ggplotly(p)
+#make a linkage map, and this can be plotted as a dendrogram
+clusters <- hclust(dist(gene_data_analysis[,10:11]))
+dend <- as.dendrogram(clusters)
+dend <- color_branches(dend, k=3)
+par(cex=0.5) # reduces font
+plot(dend)
 ```
 Next I will creat pca and shiny.io app
-  
+
+#The final major
+I creat pca and code below:
+
+```{r}
+pca <- prcomp(gene_data[,2:51],scale = TRUE)
+pcadf<- data.frame(pca$rotation)
+gene_data_analysis <- cbind(samples,pcadf)
+write.csv(gene_data_analysis,"gene_sample_pca.csv")
+plot_ly(data = gene_data_analysis, x = ~PC1, y = ~PC2, color = gene_data_analysis$icgc_donor_id )
+plot_ly(data = pcadf, x = ~PC1, y = ~PC2, text = rownames(pcadf))
+plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+ layout(scene = list(xaxis = list(title = 'PC1'),
+                     yaxis = list(title = 'PC2'),
+                     zaxis = list(title = 'PC3')))
+```
+
+Also,I creat a data explorer using my gene_sample_pca file. And the publish website as below:
+https://xianghuildataexplorer.shinyapps.io/samples/
+
 
 
