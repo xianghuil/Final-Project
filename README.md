@@ -129,8 +129,10 @@ plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A',
 
 My final project file-finalproject.Rmd has been already uploaded into website:
 http://rpubs.com/vidia/FinalProjectBRCA
+
 Also,I creat a data explorer using my gene_sample_pca file. And the publish website as below:
 https://xianghuildataexplorer.shinyapps.io/samples/
+
 Finally, I also put my pca into shinyapp.io:https://xianghuildataexplorer.shinyapps.io/PCAshiny/
 
 
