@@ -166,7 +166,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   output$plot <- renderPlotly({
-    plot_ly(pcadf, x = ~get(input$x), y = ~get(input$y), z = ~get(input$z), color = gene_data_analysis$icgc_donor_id, colors = c('#BF382A', '#0C4B8E')) %>%
+    plot_ly(dataset, x = ~get(input$x), y = ~get(input$y), z = ~get(input$z), color = dataset$icgc_donor_id, colors = c('#BF382A', '#0C4B8E')) %>%
       add_markers() %>%
       layout(scene = list(xaxis = list(title = 'PC1'),
                           yaxis = list(title = 'PC2'),
