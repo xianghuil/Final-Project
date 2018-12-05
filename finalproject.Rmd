@@ -1,0 +1,60 @@
+---
+title: "finalproject"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r} 
+library(ggplot2)
+library(reshape2)
+library('RColorBrewer')
+library(dplyr)
+library('dendextend')
+library(plotly)
+
+#put data into dataframe
+setwd(dir = '~/Desktop/510/final_project') #open the directory
+samples <- read.csv('samples_infor.csv',header = TRUE, sep = ",",quote = "\"", dec = ".", fill = TRUE) #read the csv file in R
+gene_data <- read.csv('exp_read_count.csv',header = TRUE, sep = "\t",quote = "\"", dec = ".", fill = TRUE) #this file need use "\t" to seperate
+pca <- prcomp(gene_data[,2:51],scale = TRUE)
+pcadf<- data.frame(pca$rotation)
+gene_data_analysis <- cbind(samples,pcadf)
+write.csv(gene_data_analysis,"gene_sample_pca.csv")
+```
+```{r}
+#analysis the samples data into the histogram
+ggplot(data = samples) +  geom_bar(mapping = aes(x = donor_vital_status), width = 0.5)
+ggplot(data = samples) +  geom_bar(mapping = aes(x = disease_status_last_followup, fill = donor_vital_status), width = 0.5)
+```
+```{r}
+#T-test
+t.test(samples$donor_age_at_last_followup[samples$disease_status_last_followup=="relapse"],samples$donor_age_at_last_followup[samples$disease_status_last_followup=="complete remission"]) 
+```
+```{r}
+#there are 50 samples in the dataset and compare them
+corr_gene <- cor(gene_data[,2:51])
+melted_gene<- melt(corr_gene) # the dataset will become two variable column and one value column
+head(melted_gene)
+p<-ggplot(melted_gene , aes(x = Var1, y = Var2)) + geom_raster(aes(fill = value)) + scale_fill_gradient2(low="navy", mid="white", high="red", midpoint=0.5) + theme( plot.title = element_blank(),axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank())
+ggplotly(p)
+```
+```{r}
+#make a linkage map, and this can be plotted as a dendrogram
+clusters <- hclust(dist(gene_data_analysis[,10:11]))
+dend <- as.dendrogram(clusters)
+dend <- color_branches(dend, k=3)
+par(cex=0.5) # reduces font
+plot(dend)
+```
+```{r}
+#put some data into pca
+plot_ly(data = gene_data_analysis, x = ~PC1, y = ~PC2, color = gene_data_analysis$icgc_donor_id )
+plot_ly(data = pcadf, x = ~PC1, y = ~PC2, text = rownames(pcadf))
+plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+ layout(scene = list(xaxis = list(title = 'PC1'),
+                     yaxis = list(title = 'PC2'),
+                     zaxis = list(title = 'PC3')))
+```
