@@ -110,7 +110,7 @@ plot(dend)
 ```
 Next I will creat pca and shiny.io app
 
-#The final major
+# The final major
 I creat pca and code below:
 
 ```{r}
@@ -180,6 +180,205 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 ```
 I can run app successful but uploading into the website
+
+# The Completed Final Project Code
+
+Code of final project
+
+```{r} 
+library(ggplot2)
+library(reshape2)
+library('RColorBrewer')
+library(dplyr)
+library('dendextend')
+library(plotly)
+
+#put data into dataframe
+setwd(dir = '~/Desktop/510/final_project') #open the directory
+samples <- read.csv('samples_infor.csv',header = TRUE, sep = ",",quote = "\"", dec = ".", fill = TRUE) #read the csv file in R
+gene_data <- read.csv('exp_read_count.csv',header = TRUE, sep = "\t",quote = "\"", dec = ".", fill = TRUE) #this file need use "\t" to seperate
+pca <- prcomp(gene_data[,2:51],scale = TRUE)
+pcadf<- data.frame(pca$rotation)
+gene_data_analysis <- cbind(samples,pcadf)
+write.csv(gene_data_analysis,"gene_sample_pca.csv")
+```
+```{r}
+#analysis the samples data into the histogram
+ggplot(data = samples) +  geom_bar(mapping = aes(x = donor_vital_status), width = 0.5)
+ggplot(data = samples) +  geom_bar(mapping = aes(x = disease_status_last_followup, fill = donor_vital_status), width = 0.5)
+```
+```{r}
+#T-test
+t.test(samples$donor_age_at_last_followup[samples$disease_status_last_followup=="relapse"],samples$donor_age_at_last_followup[samples$disease_status_last_followup=="complete remission"]) 
+```
+```{r}
+#there are 50 samples in the dataset and compare them
+corr_gene <- cor(gene_data[,2:51])
+melted_gene<- melt(corr_gene) # the dataset will become two variable column and one value column
+head(melted_gene)
+p<-ggplot(melted_gene , aes(x = Var1, y = Var2)) + geom_raster(aes(fill = value)) + scale_fill_gradient2(low="navy", mid="white", high="red", midpoint=0.5) + theme( plot.title = element_blank(),axis.text.x = element_blank(), axis.text.y = element_blank(), axis.title.y = element_blank(), axis.title.x = element_blank())
+ggplotly(p)
+```
+```{r}
+#make a linkage map, and this can be plotted as a dendrogram
+clusters <- hclust(dist(gene_data_analysis[,10:11]))
+dend <- as.dendrogram(clusters)
+dend <- color_branches(dend, k=3)
+par(cex=0.5) # reduces font
+plot(dend)
+```
+```{r}
+#put some data into pca
+write.csv(pcadf,"pcadf.csv")
+plot_ly(data = gene_data_analysis, x = ~PC1, y = ~PC2, color = gene_data_analysis$icgc_donor_id )
+plot_ly(data = pcadf, x = ~PC1, y = ~PC2, text = rownames(pcadf))
+plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+ layout(scene = list(xaxis = list(title = 'PC1'),
+                     yaxis = list(title = 'PC2'),
+                     zaxis = list(title = 'PC3')))
+```
+
+Code of creating the expression data
+
+```{r}
+import pandas as pd
+import numpy as np
+
+if __name__ == '__main__':
+	data = pd.read_csv('exp_seq.BRCA-KR.tsv', sep='\t')
+
+	n_samples = data.shape[0]
+	sample_ids = data['icgc_sample_id'].unique()
+	gene_ids = data['gene_id'].unique()
+	col_names = np.append('gene_id', sample_ids)
+	cols = col_names.shape[0]
+	rows = gene_ids.shape[0]
+
+	# np.zeros((rows, cols))
+	new_data = pd.DataFrame(np.zeros((rows, cols)), columns=col_names, index=gene_ids)
+	new_data = new_data.astype('str')
+	# print(new_data)
+
+	for r in range(n_samples):
+	    if r % 1000 == 0:
+	        print(r)
+	    col = data.iloc[r]['icgc_sample_id']
+	    gene_id = data.iloc[r]['gene_id']
+	#     print(gene_id)
+	    new_data.loc[gene_id][col] = data.iloc[r]['normalized_read_count']
+	    new_data.loc[gene_id]['gene_id'] = gene_id
+
+	new_data.to_csv('data.csv', sep='\t', index=False)
+```
+
+The sample shiny part
+
+```{r}
+library(ggplot2)
+library(shiny)
+library(RColorBrewer)
+dataset <- read.csv('gene_sample_pca.csv',header = TRUE, sep = ",", quote = "\"", dec = ".", fill = TRUE, row.names = 1)
+headerNames=colnames(dataset)
+ui <- fluidPage(
+  pageWithSidebar(
+    
+    headerPanel("Data Explorer"),
+    
+    sidebarPanel(
+      selectInput('x', 'X', c("None"=FALSE,headerNames),headerNames[2]),
+      selectInput('y', 'Y', c("None"=FALSE,headerNames),headerNames[3]),
+      selectInput('color', 'Color', c("None"=FALSE,headerNames),headerNames[5]),
+      
+      checkboxInput('geom_point', 'geom_point',TRUE),
+      checkboxInput('geom_dotplot', 'geom_dotplot'),
+      checkboxInput('geom_bar', 'geom_bar'),
+      checkboxInput('geom_violin','geom_violin'),
+      checkboxInput('geom_histogram','geom_histogram')
+    ),
+    
+    mainPanel(
+      plotOutput('plot')
+    )
+  )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  
+  output$plot <- renderPlot({
+    p <- ggplot(dataset, aes_string(
+      x=input$x, fill=input$fill, size=input$size, color=input$color))
+    #+scale_size_continuous(range=input$sizeRange)
+    if (input$geom_point)
+      p <- p + geom_point(aes_string(y=input$y))
+  
+    if (input$geom_bar)
+      p <- p + geom_bar() 
+    if (input$geom_dotplot)
+      p <- p + geom_dotplot()
+    if (input$geom_violin)
+      p <- p + geom_violin(aes_string(y=input$y))
+    if (input$geom_histogram)
+      p <- p + geom_histogram()
+    print(p)
+    
+  }, height=700)
+  
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+The PCA part shiny
+
+```{r}
+library(shiny)
+library(ggplot2)
+library(RColorBrewer)
+library(plotly)
+
+dataset <- read.csv('gene_sample_pca.csv',header = TRUE, sep = ",", quote = "\"", dec = ".", fill = TRUE, row.names = 1)
+headerNames=colnames(dataset)
+
+ui <- fluidPage(
+  pageWithSidebar(
+    
+    headerPanel("PCA Explorer"),
+    
+    sidebarPanel(
+      selectInput('x', 'X', c("None"=FALSE,headerNames),headerNames[11]),
+      selectInput('y', 'Y', c("None"=FALSE,headerNames),headerNames[12]),
+      selectInput('z', 'z', c("None"=FALSE,headerNames),headerNames[13])
+    ),
+    
+    mainPanel(
+      plotlyOutput('plot')
+    )
+  )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+  
+  output$plot <- renderPlotly({
+    plot_ly(dataset, x = ~get(input$x), y = ~get(input$y), z = ~get(input$z), color = dataset$icgc_donor_id, colors = c('#BF382A', '#0C4B8E')) %>%
+      add_markers() %>%
+      layout(scene = list(xaxis = list(title = 'PC1'),
+                          yaxis = list(title = 'PC2'),
+                          zaxis = list(title = 'PC3')))
+    
+  })
+  
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+
+
 
 
 
