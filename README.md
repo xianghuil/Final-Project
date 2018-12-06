@@ -116,7 +116,7 @@ plot(dend)
 ```
 Next I will creat pca and shiny.io app
 
-## The final major
+## The final major part
 I creat pca below:
 
 ```{r}
