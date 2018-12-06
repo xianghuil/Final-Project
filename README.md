@@ -183,6 +183,8 @@ I can run app successful but uploading into the website
 
 # The Completed Final Project Code
 
+## R markdown code part
+
 Code of final project
 
 ```{r} 
@@ -239,6 +241,8 @@ plot_ly(pcadf, x = ~PC1, y = ~PC2, z = ~PC3, color = ~PC4, colors = c('#BF382A',
                      zaxis = list(title = 'PC3')))
 ```
 
+## Python Code part
+
 Code of creating the expression data
 
 ```{r}
@@ -271,6 +275,8 @@ if __name__ == '__main__':
 
 	new_data.to_csv('data.csv', sep='\t', index=False)
 ```
+
+## Shinyapp.io Part
 
 The sample shiny part
 
@@ -376,6 +382,9 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 ```
+
+## The Website Published Part
+
 My final project file-finalproject.Rmd has been already uploaded into Rpubs:
 http://rpubs.com/vidia/FinalProjectBRCA
 
