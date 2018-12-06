@@ -1,5 +1,5 @@
 # Final-Project
-# Basic Description
+## Basic Description
 My final project is about breast cancer in Korea, and I collect the data from the website https://dcc.icgc.org/releases/current/Projects/BRCA-KR and gather the data I want.
 In my data, all the samples are from young women and they are donors. I want to compare the survival state of the patients whose relapsed type are distant recurrence/metastasis, which can present the survival rate of this relapsed type patients. Thus, in my file, you can see the these data there. 
 
@@ -12,11 +12,15 @@ I have gotten my data in R. Next, I will use bar graph to see the survival rate 
 Milestone 3 11.27
 shiny.io app and pca and all the data anylsis could be done. And figure out the issue in my anylsis. To prepare final presentation. 
 
-# The Major Milestone
+# Milestones
+
+## The Major Milestone
 To creat pca to analysis all the data.
 
-# The First Milestone
+## The First Milestone
+
 To collect the data and put the data in R and creat the dataframe.
+
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -29,7 +33,8 @@ gene <- read.csv('gene_.csv',header = TRUE, sep = ",",
 ```
 The issue is my data is not in format that let me use to analysis.
 
-# The Second Milestone
+## The Second Milestone
+
 I use python to make my data into a right format. icgc_Sample_id is my header and gene_id is very left column and the value is normalization_read_count.
 
 ```{r}
@@ -85,7 +90,8 @@ ggplot(data = samples) +  geom_bar(mapping = aes(x = disease_status_last_followu
 ```
 Next I need to creat a heatmap to compare 50 samples with their gene_id.
 
-# The Third Milestone
+## The Third Milestone
+
 I created the heatmap using my gene data. However, the issue is my heatmap seems like just has one color which I think is wrong.
 ```{r}
 #there are 50 samples in the dataset and compare them with the gene_id
@@ -110,7 +116,7 @@ plot(dend)
 ```
 Next I will creat pca and shiny.io app
 
-# The final major
+## The final major
 I creat pca below:
 
 ```{r}
