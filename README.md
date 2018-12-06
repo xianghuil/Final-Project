@@ -111,7 +111,7 @@ plot(dend)
 Next I will creat pca and shiny.io app
 
 # The final major
-I creat pca and code below:
+I creat pca below:
 
 ```{r}
 pca <- prcomp(gene_data[,2:51],scale = TRUE)
@@ -376,7 +376,14 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 ```
+My final project file-finalproject.Rmd has been already uploaded into Rpubs:
+http://rpubs.com/vidia/FinalProjectBRCA
 
+Also, the sample shinyapp.io published website:
+https://xianghuildataexplorer.shinyapps.io/samples/
+
+Finally, the PCA into shinyapp.io: https://xianghuildataexplorer.shinyapps.io/PCAshinyapp/
+However, there is an error occured when I published. Thus the code is above.
 
 
 
